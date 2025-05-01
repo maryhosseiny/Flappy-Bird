@@ -22,7 +22,7 @@ scroll_speed = 4
 ground_y = screen_height - ground_img.get_height()
 flying = False
 game_over = False
-pipe_gap = 150 #pixels
+pipe_gap = 300 #pixels
 pipe_frq = 1500 #miliseconds
 last_pipe = pygame.time.get_ticks() - pipe_frq
 
@@ -109,13 +109,16 @@ while run:
     bird_group.draw(screen)
     bird_group.update(screen)
     pipe_group.draw(screen)
-    pipe_group.update(screen)
 
 
     #ground photo adding
     for x in range(0, screen_width + ground_img.get_width(), ground_img.get_width()):
         screen.blit(ground_img, (x + ground_scroll, ground_y))
     
+    #collision 
+    if pygame.sprite.groupcollide(bird_group, pipe_group, False, False) or flappy.rect.top < 0:
+        game_over = True
+
     #checking for bird hitting the ground
     if flappy.rect.bottom > 820:
         game_over = True
@@ -138,6 +141,7 @@ while run:
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > ground_img.get_width():
             ground_scroll = 0
+        pipe_group.update()
 
     # ending the game
     for event in pygame.event.get():
