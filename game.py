@@ -15,6 +15,7 @@ pygame.display.set_caption('Flappy Bird')
 # images 
 bg = pygame.image.load('img/bg.png')
 ground_img = pygame.image.load('img/ground.png')
+button_img = pygame.image.load('img/restart.png')
 
 font = pygame.font.SysFont('Bauhuas 93', 60)
 white = (255, 255, 255) 
@@ -25,7 +26,7 @@ scroll_speed = 4
 ground_y = screen_height - ground_img.get_height()
 flying = False
 game_over = False
-pipe_gap = 250 #pixels
+pipe_gap = 200 #pixels
 pipe_frq = 1500 #miliseconds
 last_pipe = pygame.time.get_ticks() - pipe_frq
 score = 0
@@ -35,6 +36,11 @@ def draw_text(text, font, text_col, x ,y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
+def reset_game():
+    pipe_group.empty()
+    flappy.rect.x = 100
+    flappy.rect.y = int(screen_height/2)
+    score = 0
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -96,11 +102,29 @@ class Pipe(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
+class Button():
+    def __init__(self, x,y,image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
+
+    def draw(self):
+        action = False
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                action = True
+
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+        return action
+    
 bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
 
 flappy = Bird(100, int(screen_height/2))
 bird_group.add(flappy)  
+
+button = Button(screen_width//2 - 196 // 2, screen_height//2 - 79 // 2, button_img)
 
 btm_pipe = Pipe(300,int(screen_height/2),-1)
 top_pipe = Pipe(300,int(screen_height/2),1)
@@ -136,12 +160,13 @@ while run:
                pass_pipe = False 
 
     draw_text(str(score), font, white, int(screen_width/2), 20)
+
     #collision 
     if pygame.sprite.groupcollide(bird_group, pipe_group, False, False) or flappy.rect.top < 0:
         game_over = True
 
     #checking for bird hitting the ground
-    if flappy.rect.bottom > 820:
+    if flappy.rect.bottom > 830:
         game_over = True
         flying = False
 
@@ -163,6 +188,12 @@ while run:
         if abs(ground_scroll) > ground_img.get_width():
             ground_scroll = 0
         pipe_group.update()
+
+    #resetting
+    if game_over == True:
+        if button.draw() == True:
+            game_over = False
+
 
     # ending the game
     for event in pygame.event.get():
