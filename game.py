@@ -21,6 +21,10 @@ scroll_speed = 4
 ground_y = screen_height - ground_img.get_height()
 flying = False
 game_over = False
+pipe_gap = 150 #pixels
+pipe_frq = 1500 #miliseconds
+last_pipe = pygame.time.get_ticks() - pipe_frq
+
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -54,7 +58,7 @@ class Bird(pygame.sprite.Sprite):
 
             #flap motion
             self.counter += 1
-            flap_cool = 10
+            flap_cool = 7
             if self.counter > flap_cool:
                 self.counter = 0
                 self.index += 1
@@ -65,9 +69,31 @@ class Bird(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.images[self.index], self.vel*-3)
         else: 
             self.image = pygame.transform.rotate(self.images[self.index], -90)
+
+class Pipe(pygame.sprite.Sprite):
+    def __init__(self, x, y, position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('img/obs.png')
+        self.rect = self.image.get_rect()
+        if position == 1:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect.bottomleft = [x,y - int(pipe_gap/2)]
+        if position == -1:
+            self.rect.topleft = [x,y + int(pipe_gap/2)]
+    
+    def update(self, *args, **kwargs):
+        self.rect.x -= scroll_speed
+
 bird_group = pygame.sprite.Group()
+pipe_group = pygame.sprite.Group()
+
 flappy = Bird(100, int(screen_height/2))
 bird_group.add(flappy)  
+
+btm_pipe = Pipe(300,int(screen_height/2),-1)
+top_pipe = Pipe(300,int(screen_height/2),1)
+pipe_group.add(btm_pipe)
+pipe_group.add(top_pipe)
 
 run = True
 while run:
@@ -79,6 +105,9 @@ while run:
     #bird on screen
     bird_group.draw(screen)
     bird_group.update(screen)
+    pipe_group.draw(screen)
+    pipe_group.update(screen)
+
 
     #ground photo adding
     for x in range(0, screen_width + ground_img.get_width(), ground_img.get_width()):
@@ -93,6 +122,14 @@ while run:
 
     #ground photo scrolling
     if game_over == False: 
+        time_now = pygame.time.get_ticks()
+        if time_now - last_pipe > pipe_frq:
+            btm_pipe = Pipe(screen_width,int(screen_height/2),-1)
+            top_pipe = Pipe(screen_width,int(screen_height/2),1)
+            pipe_group.add(btm_pipe)
+            pipe_group.add(top_pipe)   
+            last_pipe = time_now
+
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > ground_img.get_width():
             ground_scroll = 0
