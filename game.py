@@ -27,6 +27,18 @@ class Bird(pygame.sprite.Sprite):
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.rect.center = [x,y]
+    
+    def update(self, *args, **kwargs):
+
+        self.counter += 1
+        flap_cool = 10
+        if self.counter > flap_cool:
+            self.counter = 0
+            self.index += 1
+            if self.index >= len(self.images):
+                self.index = 0
+        self.image = self.images[self.index]
+  
 
 bird_group = pygame.sprite.Group()
 flappy = Bird(100, int(screen_height/2))
@@ -47,6 +59,7 @@ while run:
 
     #bird 
     bird_group.draw(screen)
+    bird_group.update(screen)
 
     #ground photo adding
     for x in range(0, screen_width + ground_img.get_width(), ground_img.get_width()):
