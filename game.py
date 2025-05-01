@@ -40,7 +40,10 @@ def reset_game():
     pipe_group.empty()
     flappy.rect.x = 100
     flappy.rect.y = int(screen_height/2)
+    flying = False
     score = 0
+    return score
+
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -126,10 +129,6 @@ bird_group.add(flappy)
 
 button = Button(screen_width//2 - 196 // 2, screen_height//2 - 79 // 2, button_img)
 
-btm_pipe = Pipe(300,int(screen_height/2),-1)
-top_pipe = Pipe(300,int(screen_height/2),1)
-pipe_group.add(btm_pipe)
-pipe_group.add(top_pipe)
 
 run = True
 while run:
@@ -166,7 +165,7 @@ while run:
         game_over = True
 
     #checking for bird hitting the ground
-    if flappy.rect.bottom > 830:
+    if flappy.rect.bottom > 815:
         game_over = True
         flying = False
 
@@ -193,6 +192,7 @@ while run:
     if game_over == True:
         if button.draw() == True:
             game_over = False
+            score = reset_game()
 
 
     # ending the game
