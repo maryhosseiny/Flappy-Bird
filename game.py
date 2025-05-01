@@ -25,6 +25,8 @@ game_over = False
 pipe_gap = 300 #pixels
 pipe_frq = 1500 #miliseconds
 last_pipe = pygame.time.get_ticks() - pipe_frq
+score = 0
+pass_pipe = False
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -53,7 +55,7 @@ class Bird(pygame.sprite.Sprite):
             #up/down motion
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
-                self.vel = -7
+                self.vel = -5
             if pygame.mouse.get_pressed()[0] == 0:
                 self.clicked = False
 
@@ -115,6 +117,17 @@ while run:
     for x in range(0, screen_width + ground_img.get_width(), ground_img.get_width()):
         screen.blit(ground_img, (x + ground_scroll, ground_y))
     
+    #checking score 
+    if len(pipe_group) > 0:
+        if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left\
+        and bird_group.sprites()[0].rect.right > pipe_group.sprites()[0].rect.right\
+        and pass_pipe == False:
+            pass_pipe = True
+        if pass_pipe == True:
+           if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.right:
+               score += 1
+               pass_pipe = False 
+
     #collision 
     if pygame.sprite.groupcollide(bird_group, pipe_group, False, False) or flappy.rect.top < 0:
         game_over = True
