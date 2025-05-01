@@ -54,6 +54,8 @@ class Bird(pygame.sprite.Sprite):
             if self.index >= len(self.images):
                 self.index = 0
         self.image = self.images[self.index]
+
+        self.image = pygame.transform.rotate(self.images[self.index], self.vel*-3)
   
 
 bird_group = pygame.sprite.Group()
