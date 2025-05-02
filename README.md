@@ -2,7 +2,7 @@
 
 A Python implementation of the classic Flappy Bird game using Pygame, styled with crystal-themed pixel art.
 
-## 🎮 Overview
+## Overview
 
 This project is a custom-styled version of Flappy Bird, featuring:
 - Smooth gravity-based bird motion
@@ -12,12 +12,12 @@ This project is a custom-styled version of Flappy Bird, featuring:
 
 The objective is simple: click to flap and guide the bird through gaps between crystal pipes. The game resets on collision, with a clickable restart button.
 
-## 📁 Project Structure
+## Project Structure
 
 - `main.py` — Core game loop and logic
 - `img/` — All game assets (background, ground, pipes, bird frames, UI buttons, crystal elements)
 
-## 🛠 Requirements
+## Requirements
 
 - Python 3.x
 - Pygame
