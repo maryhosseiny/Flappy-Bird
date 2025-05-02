@@ -121,8 +121,38 @@ class Button():
         screen.blit(self.image, (self.rect.x, self.rect.y))
         return action
     
+class BackgroundObject(pygame.sprite.Sprite):
+    def __init__(self, image_path):
+        super().__init__()
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, screen_width)
+        self.rect.y = random.randint(-100, screen_height)
+        self.speed = random.uniform(0.3, 1.2)
+
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.top > screen_height:
+            self.rect.y = random.randint(-150, -40)
+            self.rect.x = random.randint(0, screen_width)
+
+
 bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
+
+background_group = pygame.sprite.Group()
+
+floating_paths = [
+    'img/shard1.png', 'img/shard2.png', 'img/shard3.png',
+    'img/shard4.png', 'img/shard5.png', 'img/shard6.png',
+    'img/shard7.png', 'img/shard8.png'
+]
+
+# Add multiple of each for variety
+for path in floating_paths:
+    for _ in range(2):  # two of each for more visual interest
+        background_group.add(BackgroundObject(path))
+
 
 flappy = Bird(100, int(screen_height/2))
 bird_group.add(flappy)  
@@ -136,6 +166,9 @@ while run:
 
     # background photo adding
     screen.blit(bg, (0,0))
+
+    background_group.update()
+    background_group.draw(screen)
 
     #bird on screen
     bird_group.draw(screen)
